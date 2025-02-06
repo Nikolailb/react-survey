@@ -46,8 +46,12 @@ export default function AnswersItem({
           <em>What else have you got to say about your rubber duck?</em>
           <span className="answer__line">{review}</span>
         </p>
-        <button onClick={(e) => handleEdit(e, id)}>Edit</button>
-        <button onClick={(e) => handleDelete(e, id)}>Delete</button>
+        <button className="answer__button" onClick={(e) => handleEdit(e, id)}>
+          Edit
+        </button>
+        <button className="answer__button" onClick={(e) => handleDelete(e, id)}>
+          Delete
+        </button>
       </article>
     </li>
   );

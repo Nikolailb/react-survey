@@ -87,6 +87,10 @@ h2 {
   margin: 0.5rem;
 }
 
+.answer__button {
+  margin: 0.3rem;
+}
+
 .answer li {
   margin: 0.25rem 0;
 }

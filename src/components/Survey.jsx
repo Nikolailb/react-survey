@@ -107,7 +107,7 @@ function Survey() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Updated item:", data);
+        console.log("Deleted item:", data);
         refreshAnswers();
       })
       .catch((error) => {
