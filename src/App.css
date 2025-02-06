@@ -6,7 +6,7 @@
   padding: 0;
 }
 
-li {
+li, ul {
   list-style: none;
 }
 
@@ -113,7 +113,6 @@ h2 {
   font-weight: normal;
   margin-bottom: 1rem;
 }
-
 .form li {
   display: inline;
 }
