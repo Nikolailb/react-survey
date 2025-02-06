@@ -1,5 +1,6 @@
 import { capitalize } from "../utils/misc";
 import PropTypes from "prop-types";
+import { answersSet } from "./AnswersItem";
 
 function Checkboxes({ name, options, onChange, values }) {
   return (
@@ -17,7 +18,7 @@ function Checkboxes({ name, options, onChange, values }) {
                   value={element.toLowerCase()}
                   onChange={onChange}
                 />
-                {capitalize(element)}
+                {capitalize(answersSet[element])}
               </label>
             </li>
           );

@@ -2,6 +2,7 @@ import { useState } from "react";
 import SurveyForm from "./SurveyForm";
 import RadioQuestion from "./RadioQuestion";
 import CheckboxQuestion from "./CheckboxQuestion";
+import AnswersList from "./AnswersList";
 
 function Survey() {
   let initialForm = {
@@ -11,8 +12,10 @@ function Survey() {
     username: "",
     email: "",
   };
+  // eslint-disable-next-line no-unused-vars
   const [open, setOpen] = useState(false); //Ignore this state
   const [formData, setFormData] = useState({ ...initialForm });
+  const [answers, setAnswers] = useState([]);
 
   const handleChange = (event) => {
     const { name, value, type } = event.target;
@@ -26,20 +29,31 @@ function Survey() {
     } else {
       setFormData({ ...formData, [event.target.name]: event.target.value });
     }
-    console.log(formData);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Test", initialForm);
+    if (formData.id == null) {
+      setAnswers((a) => [...a, { ...formData }]);
+    } else {
+      let answ = [...answers];
+      answ[formData.id] = formData;
+      setAnswers(answ);
+    }
     setFormData({ ...initialForm });
+  };
+
+  const handleEdit = (event, index) => {
+    event.preventDefault();
+    console.log(index, answers[index]);
+    setFormData({ ...answers[index], id: index });
   };
 
   return (
     <main className="survey">
       <section className={`survey__list ${open ? "open" : ""}`}>
         <h2>Answers list</h2>
-        {/* answers should go here */}
+        <AnswersList answersList={answers} handleEdit={handleEdit} />
       </section>
       <section className="survey__form">
         <SurveyForm
@@ -55,7 +69,7 @@ function Survey() {
           <CheckboxQuestion
             question={"How do you like to spend time with your rubber duck?"}
             name={"ducktime"}
-            options={["swimming", "bathing", "chatting", "no time"]}
+            options={["swimming", "bathing", "chatting", "notime"]}
             onChange={handleChange}
             values={formData.ducktime}
           />

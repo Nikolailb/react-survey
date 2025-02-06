@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 function SurveyForm({ title, onSubmit, children }) {
   return (
     <form className="form" onSubmit={onSubmit}>
@@ -7,5 +9,9 @@ function SurveyForm({ title, onSubmit, children }) {
     </form>
   );
 }
-
+SurveyForm.propTypes = {
+  title: PropTypes.string,
+  onSubmit: PropTypes.func,
+  children: PropTypes.array,
+};
 export default SurveyForm;
