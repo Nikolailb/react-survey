@@ -26,9 +26,9 @@ ItemsList.propTypes = {
 export default function AnswersItem({
   // Feel free to change this props names to what suits you best
   // Rememeber here we're destructuring answerItem, which is the prop name that we've passed
-  answerItem: { username, colour, ducktime, review },
+  answerItem: { username, colour, ducktime, review, id },
   handleEdit,
-  index,
+  handleDelete,
 }) {
   return (
     <li>
@@ -46,7 +46,8 @@ export default function AnswersItem({
           <em>What else have you got to say about your rubber duck?</em>
           <span className="answer__line">{review}</span>
         </p>
-        <button onClick={(e) => handleEdit(e, index)}>Edit</button>
+        <button onClick={(e) => handleEdit(e, id)}>Edit</button>
+        <button onClick={(e) => handleDelete(e, id)}>Delete</button>
       </article>
     </li>
   );
@@ -55,5 +56,6 @@ AnswersItem.propTypes = {
   answerItem: PropTypes.object,
   handleEdit: PropTypes.func,
   index: PropTypes.number,
+  handleDelete: PropTypes.func,
 };
 export { answersSet };

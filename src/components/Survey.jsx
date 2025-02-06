@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SurveyForm from "./SurveyForm";
 import RadioQuestion from "./RadioQuestion";
 import CheckboxQuestion from "./CheckboxQuestion";
@@ -6,6 +6,7 @@ import AnswersList from "./AnswersList";
 
 function Survey() {
   let initialForm = {
+    id: 0,
     colour: "",
     ducktime: [],
     review: "",
@@ -16,7 +17,27 @@ function Survey() {
   const [open, setOpen] = useState(false); //Ignore this state
   const [formData, setFormData] = useState({ ...initialForm });
   const [answers, setAnswers] = useState([]);
+  const [newId, setNewId] = useState(0);
 
+  const refreshAnswers = () => {
+    fetch("http://localhost:3000/answerList")
+      .then((res) => {
+        if (!res.ok) {
+          throw Error(
+            "Failed to fetch data, check if json server is live and on port 3000!"
+          );
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setAnswers(data);
+        let newId =
+          data.reduce((max, item) => (item.id > max ? item.id : max), -1) + 1;
+        setNewId(newId);
+      });
+  };
+
+  useEffect(refreshAnswers, []);
   const handleChange = (event) => {
     const { name, value, type } = event.target;
 
@@ -33,27 +54,76 @@ function Survey() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (formData.id == null) {
-      setAnswers((a) => [...a, { ...formData }]);
+    let existing = answers.find((item) => item.id === formData.id);
+    if (existing !== undefined) {
+      fetch(`http://localhost:3000/answerList/${existing.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Updated item:", data);
+          refreshAnswers();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     } else {
-      let answ = [...answers];
-      answ[formData.id] = formData;
-      setAnswers(answ);
+      fetch("http://localhost:3000/answerList", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Created item:", data);
+          refreshAnswers();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     }
-    setFormData({ ...initialForm });
+
+    setFormData({ ...initialForm, id: newId });
   };
 
-  const handleEdit = (event, index) => {
+  const handleEdit = (event, id) => {
     event.preventDefault();
-    console.log(index, answers[index]);
-    setFormData({ ...answers[index], id: index });
+    setFormData({ ...answers.find((item) => item.id === id) });
+  };
+
+  const handleDelete = (event, id) => {
+    event.preventDefault();
+    fetch(`http://localhost:3000/answerList/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Updated item:", data);
+        refreshAnswers();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   return (
     <main className="survey">
       <section className={`survey__list ${open ? "open" : ""}`}>
         <h2>Answers list</h2>
-        <AnswersList answersList={answers} handleEdit={handleEdit} />
+        <AnswersList
+          answersList={answers}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+        />
       </section>
       <section className="survey__form">
         <SurveyForm
